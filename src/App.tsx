@@ -1,7 +1,16 @@
-import React from 'react'
+import React from 'react';
+import { UserList } from './components/UserList';
+import { UserModal } from './components/UserModal';
 
-export default function App() {
+function App() {
   return (
-    <div>App</div>
-  )
+    <div className="min-h-screen bg-gray-100">
+      <main className="max-w-6xl mx-auto py-8">
+        <UserList />
+        <UserModal />
+      </main>
+    </div>
+  );
 }
+
+export default App;
