@@ -60,7 +60,7 @@ export default function App() {
     return { total, active, inactive }
   }, [users])
 
-  // Form Validation and Actions
+  
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newUser.name.trim()) return
