@@ -7,7 +7,7 @@ export interface UserJ {
 }
 
 export const usersAtom = atom<UserJ[]>([
-  { id: '1', status: true, role: 'Admin' },
+  { id: '1', status: true, role: 'Admin' }, 
   { id: '2', status: false, role: 'User' } 
 ])
 
