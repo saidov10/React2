@@ -47,7 +47,7 @@ export default function App() {
           >
             <div className="flex justify-between items-start mb-4">
               <h2 className={`text-xl font-semibold leading-none tracking-tight ${todo.isCompleted ? 'line-through' : ''}`}>
-                {todo.name}
+                {todo.name} 
               </h2>
               <span className={`px-2 py-1 rounded text-xs font-medium ${todo.isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                 {todo.isCompleted ? 'Completed' : 'Pending'}
