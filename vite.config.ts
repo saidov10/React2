@@ -8,5 +8,14 @@ export default defineConfig({
     alias: {
       "@": "/src"
     },
+  },
+  server: {
+    proxy: { 
+      '/api': {
+        target: 'https://debt-back-prod.onrender.com',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
   }
 })

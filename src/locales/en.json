@@ -1,0 +1,189 @@
+{
+  "login": {
+    "noAccount": "Don't have an account?",
+    "username": "Username",
+    "usernamePlaceholder": "Enter username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "forgotPassword": "Forgot Password?",
+    "loggingIn": "Logging in...",
+    "successToast": "Welcome back! Logged in successfully. 👋",
+    "noTokenError": "No token received from server.",
+    "errorToast": "Invalid username or password."
+  },
+  "signup": {
+    "title": "Sign up",
+    "haveAccount": "Already have an account?",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Enter full name",
+    "businessName": "Business Name",
+    "businessNamePlaceholder": "My Great Business",
+    "email": "Email",
+    "emailPlaceholder": "Enter email address",
+    "createAccount": "Create Account",
+    "creating": "Creating...",
+    "termsPrefix": "By Signing up, you agree to our",
+    "termsOfService": "Terms of Service",
+    "termsAnd": "and",
+    "privacyPolicy": "Privacy Policy",
+    "successToast": "Account created successfully! 🎉",
+    "errorToast": "Registration failed. Please try again."
+  },
+  "nav": {
+    "landing": "Landing",
+    "dashboard": "Dashboard",
+    "debts": "Debts",
+    "archive": "Archive",
+    "contacts": "Contacts",
+    "folders": "Folders",
+    "users": "Users",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "feedback": "Feedback",
+    "pricing": "Pricing"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "toggle": "Language",
+    "current": "Language: English"
+  },
+  "pages": {
+    "landing": {
+      "title": "Landing Page",
+      "description": "This is the landing page. Update this section with your content.",
+      "badge": "🔒 SECURE DEBT MANAGEMENT",
+      "heroTitle1": "Track all your",
+      "heroTitle2": "debts.",
+      "heroTitleAccent": "And manage your finances.",
+      "heroDesc": "Track debts, financial relationships, and contacts — all in one platform. Simple, secure, and always accessible — even without the internet.",
+      "heroBtnPrimary": "Get started for free",
+      "heroBtnSecondary": "Contact us",
+      "featuresHeading": "Everything you need to manage debts",
+      "features": {
+        "debtBook": {
+          "title": "Debt Book",
+          "desc": "Accurately record all transactions. Track who owes you and who you owe in a single interface."
+        },
+        "contactsManager": {
+          "title": "Contacts Manager",
+          "desc": "Organize contacts with detailed profiles. Link debts directly to specific people."
+        },
+        "offlineMode": {
+          "title": "Offline Mode",
+          "desc": "Works offline. Your data is stored on your device and synchronized when connected."
+        },
+        "analytics": {
+          "title": "Analytics",
+          "desc": "Visual dashboards showing debt trends, payment history, and returns at a glance."
+        },
+        "securePrivate": {
+          "title": "Secure & Private",
+          "desc": "JWT authentication, encrypted storage, and official access secure your financial data."
+        },
+        "multilanguage": {
+          "title": "Multi-language Support",
+          "desc": "Use Adl 5:8 in English, Russian, or Tajik. Switch languages without losing any data."
+        }
+      },
+      "stats": {
+        "activeUsers": {
+          "label": "Active Users",
+          "desc": "Managing debts daily"
+        },
+        "trackedDebts": {
+          "label": "Tracked Debts",
+          "desc": "Across all accounts"
+        },
+        "uptime": {
+          "label": "Uptime",
+          "desc": "Reliable and always online"
+        },
+        "languages": {
+          "label": "Languages",
+          "desc": "EN • RU • TJ"
+        }
+      },
+      "howItWorksHeading": "Get started in four simple steps",
+      "steps": {
+        "step1": {
+          "title": "Simple Account",
+          "desc": "Sign up in seconds. No credit card required. Your data remains on your device."
+        },
+        "step2": {
+          "title": "Add Debts",
+          "desc": "Record debts with contacts, amounts, dates, and notes. Sort them in tables."
+        },
+        "step3": {
+          "title": "Track Progress",
+          "desc": "Monitor payments, view analytics, and gain insights into financial relationships."
+        },
+        "step4": {
+          "title": "Stay Organized",
+          "desc": "Mark debts as paid, export reports, and maintain a clear history of all transactions."
+        }
+      },
+      "cta": {
+        "title": "Are you ready to take control of your finances?",
+        "desc": "Join thousands of users who trust Adl 5:8 for organizing their financial records.",
+        "btnPrimary": "Get started for free",
+        "btnSecondary": "Log In"
+      },
+      "footer": {
+        "desc": "An efficient platform for managing debts. Track, organize, and control debts with confidence.",
+        "product": "Product",
+        "company": "Company",
+        "support": "Support",
+        "aboutUs": "About Us",
+        "blog": "Blog",
+        "jobs": "Jobs",
+        "press": "Press",
+        "docs": "Docs",
+        "helpCenter": "Help Center",
+        "contact": "Contact",
+        "announcements": "Announcements",
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "cookies": "Cookies"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard Page",
+      "description": "This is the dashboard page. View your key statistics and details here."
+    },
+    "debts": {
+      "title": "Debts Page",
+      "description": "This is the debts page. Track and manage your debts here."
+    },
+    "archive": {
+      "title": "Archive Page",
+      "description": "This is the archive page. View your archived items here."
+    },
+    "contacts": {
+      "title": "Contacts Page",
+      "description": "This is the contacts page. Find and manage your contacts here."
+    },
+    "folders": {
+      "title": "Folders Page",
+      "description": "This is the folders page. Organize your files in folders here."
+    },
+    "users": {
+      "title": "Users Page",
+      "description": "This is the users page. View and manage user accounts here."
+    },
+    "login": {
+      "title": "Log In Page",
+      "description": "This is the log in page. Enter your credentials to access your account."
+    },
+    "signup": {
+      "title": "Sign Up Page",
+      "description": "This is the sign up page. Create a new account to get started."
+    }
+  }
+}
