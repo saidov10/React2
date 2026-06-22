@@ -67,11 +67,11 @@ export default function Debts() {
   const [newFolder, setNewFolder] = useState('Бизнес');
   const [newDueDate, setNewDueDate] = useState('');
 
-  // Form states - Quick Payment
+  
   const [selectedDebtId, setSelectedDebtId] = useState('');
   const [payAmount, setPayAmount] = useState('');
 
-  // Folders list
+  
   const folders = useMemo(() => {
     const set = new Set(debts.map(d => d.folder));
     return ['all', ...Array.from(set)];
