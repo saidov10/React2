@@ -1,8 +1,5 @@
-import React from 'react'
+import TodoListPage from './pages/TodoListPage';
 
 export default function App() {
-  return (
-    <div>App</div>
-  )
+  return <TodoListPage />;
 }
- 
