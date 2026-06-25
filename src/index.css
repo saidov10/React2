@@ -1,1 +1,40 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #DB4444;
+  --color-primary-hover: #C33B3B;
+  --color-dark-bg: #0A0A0B;
+  --color-dark-card: #131316;
+  --color-dark-border: #222226;
+  --color-dark-text: #FAFAFA;
+  --color-dark-muted: #A1A1AA;
+}
+
+@layer base {
+  html, body {
+    @apply h-full overflow-x-hidden antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    @apply bg-white text-black transition-colors duration-200;
+  }
+
+  html.dark body {
+    @apply bg-[var(--color-dark-bg)] text-[var(--color-dark-text)];
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.aspect-ratio-square {
+  aspect-ratio: 1 / 1;
+}
