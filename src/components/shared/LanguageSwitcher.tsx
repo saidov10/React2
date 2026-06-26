@@ -2,7 +2,7 @@ import React from 'react';
 import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../../store/useStore';
-
+ 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
   const { language, setLanguage } = useStore();
@@ -11,7 +11,7 @@ export default function LanguageSwitcher() {
     const newLang = e.target.value as 'en' | 'ru' | 'tg';
     setLanguage(newLang);
     i18n.changeLanguage(newLang);
-  };
+  }; 
 
   return (
     <div className="flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium dark:border-zinc-800">

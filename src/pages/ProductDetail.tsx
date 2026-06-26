@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Star, Heart, Truck, RotateCcw, Minus, Plus } from 'lucide-react';
+import { Star, Heart, Truck, RotateCcw, Minus, Plus, Check } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { axiosRequest } from '../lib/axiosRequest';
 import type { Product } from '../lib/mockData';
-import { mapApiProductToProduct } from '../lib/mockData';
+import { mapApiProductToProduct, PLACEHOLDER_IMAGE } from '../lib/mockData';
 import ProductCard from '../components/shared/ProductCard';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { addToCart, toggleWishlist, wishlist } = useStore();
+  const { addToCart, toggleWishlist, wishlist, cart } = useStore();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -88,6 +88,7 @@ export default function ProductDetail() {
   }
 
   const isFav = wishlist.some((item) => item.id === product.id);
+  const isInCart = cart.some((item) => item.product.id === product.id);
 
   const handleIncrement = () => setQuantity((prev) => prev + 1);
   const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
@@ -124,13 +125,27 @@ export default function ProductDetail() {
                   selectedImage === img ? 'border-[#DB4444]' : 'border-slate-200 dark:border-zinc-800'
                 }`}
               >
-                <img src={img} alt={`${product.name} gallery ${index}`} className="max-h-full max-w-full object-contain" />
+                <img
+                  src={img || PLACEHOLDER_IMAGE}
+                  alt={`${product.name} gallery ${index}`}
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE;
+                  }}
+                />
               </button>
             ))}
           </div>
 
           <div className="flex-1 min-w-0 aspect-ratio-square bg-slate-50 rounded border border-slate-200 flex items-center justify-center p-6 dark:bg-zinc-900 dark:border-zinc-800">
-            <img src={selectedImage} alt={product.name} className="max-h-96 max-w-full object-contain" />
+            <img
+              src={selectedImage || PLACEHOLDER_IMAGE}
+              alt={product.name}
+              className="max-h-96 max-w-full object-contain"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE;
+              }}
+            />
           </div>
         </div>
 
@@ -143,12 +158,22 @@ export default function ProductDetail() {
                 <Star className="h-3.5 w-3.5 fill-current" />
                 <span className="font-bold text-slate-700 dark:text-zinc-300">{product.rating}</span>
               </div>
+              {product.reviewCount > 0 && (
+                <>
+                  <span className="text-slate-300 dark:text-zinc-700">|</span>
+                  <span className="text-slate-400">({product.reviewCount} {t('detail.reviews')})</span>
+                </>
+              )}
               <span className="text-slate-300 dark:text-zinc-700">|</span>
-              <span className="text-slate-400">({product.reviewCount} {t('detail.reviews')})</span>
-              <span className="text-slate-300 dark:text-zinc-700">|</span>
-              <span className="text-emerald-500 font-bold">
-                {t('detail.inStock')} {product.stock !== undefined && `(${product.stock})`}
-              </span>
+              {product.stock !== undefined && product.stock > 0 ? (
+                <span className="text-emerald-500 font-bold">
+                  {t('detail.inStock')} ({product.stock})
+                </span>
+              ) : (
+                <span className="text-red-500 font-bold">
+                  {t('detail.outOfStock')}
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-3 pt-1">
               <span className="text-xl font-bold text-[#DB4444]">${product.price}</span>
@@ -227,9 +252,20 @@ export default function ProductDetail() {
 
             <button
               onClick={handleAddToCart}
-              className="flex-1 min-w-[120px] rounded bg-[#DB4444] py-2.5 text-xs font-bold text-white hover:bg-[#C33B3B] transition-colors cursor-pointer"
+              className={`flex-1 min-w-[120px] rounded py-2.5 text-xs font-bold text-white transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+                isInCart 
+                  ? 'bg-emerald-600 hover:bg-emerald-700' 
+                  : 'bg-[#DB4444] hover:bg-[#C33B3B]'
+              }`}
             >
-              {t('detail.addToCart')}
+              {isInCart ? (
+                <>
+                  <Check className="h-4 w-4" />
+                  <span>{t('detail.addedToCart')}</span>
+                </>
+              ) : (
+                <span>{t('detail.addToCart')}</span>
+              )}
             </button>
 
             <button

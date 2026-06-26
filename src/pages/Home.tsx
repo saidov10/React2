@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, ArrowRight, Truck, Headphones, ShieldCheck, ChevronRight } from 'lucide-react';
@@ -6,6 +6,9 @@ import * as Icons from 'lucide-react';
 import { useStore } from '../store/useStore';
 import ProductCard from '../components/shared/ProductCard';
 import { Skeleton } from '../components/ui/skeleton';
+import { PLACEHOLDER_IMAGE } from '../lib/mockData';
+import type { Product } from '../lib/mockData';
+
 
 const CategoryIcon = ({ name, className }: { name: string; className?: string }) => {
   const IconComponent = (Icons as any)[name];
@@ -150,9 +153,54 @@ function HomeSkeleton() {
   );
 }
 
+const getSubcategories = (categoryName: string, categoryId: string, allProducts: Product[]) => {
+  const name = categoryName.toLowerCase();
+  
+  if (name.includes('watch') || name.includes('smartwatch')) {
+    return ['Apple Watch', 'Samsung Gear', 'Fitness Trackers', 'Sport Watches', 'Kids Smartwatches'];
+  }
+  if (name.includes('computer') || name.includes('laptop') || name.includes('pc')) {
+    return ['Laptops', 'Gaming PCs', 'Monitors', 'PC Components', 'Printers & Ink', 'Keyboards & Mice'];
+  }
+  if (name.includes('gaming') || name.includes('console')) {
+    return ['PlayStation', 'Xbox', 'Nintendo Switch', 'Gaming Controllers', 'Headsets', 'Retro Consoles'];
+  }
+  if (name.includes('gun') || name.includes('weapon')) {
+    return ['Toy Blasters', 'Water Guns', 'Target Games', 'Holsters & Gear', 'Outdoor Shooting'];
+  }
+  if (name.includes('car') || name.includes('auto')) {
+    return ['RC Cars', 'Model Vehicles', 'Car Accessories', 'Car Care', 'GPS & Electronics'];
+  }
+  if (name.includes('phone') || name.includes('mobile')) {
+    return ['Smartphones', 'Phone Cases', 'Chargers & Cables', 'Power Banks', 'Headphones'];
+  }
+  if (name.includes('cloth') || name.includes('wear') || name.includes('fashion') || name.includes('shirt')) {
+    return ["Men's Fashion", "Women's Fashion", 'Kids Wear', 'Shoes', 'Accessories'];
+  }
+  
+  const catProducts = allProducts.filter(p => p.category === categoryId);
+  if (catProducts.length > 0) {
+    return catProducts.slice(0, 5).map(p => p.name);
+  }
+  
+  return ['New Arrivals', 'Best Sellers', 'Trending Now', 'Special Offers'];
+};
+
 export default function Home() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const categoriesRef = useRef<HTMLDivElement>(null);
+  
+  const scrollCategories = (direction: 'left' | 'right') => {
+    if (categoriesRef.current) {
+      const scrollAmount = 360;
+      categoriesRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const { 
     products, 
     categories, 
@@ -165,35 +213,6 @@ export default function Home() {
   const [searchVal, setSearchVal] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
   const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 23, minutes: 19, seconds: 56 });
-
-  useEffect(() => {
-    fetchProducts({ PageSize: 50 });
-    fetchCategories();
-  }, [fetchProducts, fetchCategories]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
-        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        if (prev.days > 0) return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        clearInterval(timer);
-        return prev;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSearchQuery(searchVal);
-    navigate('/products');
-  };
-
-  const handleCategoryClick = (categoryId: string) => {
-    navigate(`/products?category=${categoryId}`);
-  };
 
   const slides = [
     {
@@ -215,6 +234,42 @@ export default function Home() {
       bgClass: "bg-[#451A03] text-white"
     }
   ];
+
+  useEffect(() => {
+    fetchProducts({ PageSize: 50 });
+    fetchCategories();
+  }, [fetchProducts, fetchCategories]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
+        if (prev.hours > 0) return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        if (prev.days > 0) return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
+        clearInterval(timer);
+        return prev;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(slideTimer);
+  }, [activeSlide, slides.length]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchQuery(searchVal);
+    navigate('/products');
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    navigate(`/products?category=${categoryId}`);
+  };
 
   // Dynamic products subsets
   const flashSaleProducts = products.filter((p) => p.isFlashSale || p.discount).slice(0, 8);
@@ -261,24 +316,83 @@ export default function Home() {
       </div>
 
       {/* Hero layout with Sidebar Menu (Desktop Only) and Slider */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2 animate-fade-in-down">
         {/* Sidebar Menu - Desktop Only */}
         <aside className="hidden lg:block lg:col-span-3 border-r border-slate-100 pr-6 dark:border-zinc-800 py-2">
           <ul className="space-y-5">
-            {categories.map((cat) => (
-              <li key={cat.id}>
-                <button
-                  onClick={() => handleCategoryClick(cat.id)}
-                  className="w-full flex items-center justify-between text-left text-sm font-medium text-slate-700 dark:text-zinc-300 hover:text-[#DB4444] dark:hover:text-[#DB4444] hover:bg-slate-50/85 dark:hover:bg-zinc-900/50 py-2.5 px-3 rounded-lg transition-all duration-200 cursor-pointer group"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <CategoryIcon name={cat.iconName} className="h-5 w-5 text-slate-500 group-hover:text-[#DB4444] dark:text-zinc-400 dark:group-hover:text-[#DB4444] transition-colors" />
-                    <span className="font-semibold tracking-wide text-slate-800 dark:text-zinc-200 group-hover:text-[#DB4444] dark:group-hover:text-[#DB4444] transition-colors">{cat.name}</span>
+            {categories.map((cat) => {
+              const flyoutProducts = products.filter((p) => p.category === cat.id).slice(0, 3);
+              const subcategories = getSubcategories(cat.name, cat.id, products);
+              
+              return (
+                <li key={cat.id} className="group relative">
+                  <button
+                    onClick={() => handleCategoryClick(cat.id)}
+                    className="w-full flex items-center justify-between text-left text-sm font-medium text-slate-700 dark:text-zinc-300 hover:text-[#DB4444] dark:hover:text-[#DB4444] hover:bg-slate-50/85 dark:hover:bg-zinc-900/50 py-2.5 px-3 rounded-lg transition-all duration-200 cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <CategoryIcon name={cat.iconName} className="h-5 w-5 text-slate-500 group-hover:text-[#DB4444] dark:text-zinc-400 dark:group-hover:text-[#DB4444] transition-colors" />
+                      <span className="font-semibold tracking-wide text-slate-800 dark:text-zinc-200 group-hover:text-[#DB4444] dark:group-hover:text-[#DB4444] transition-colors">{cat.name}</span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-[#DB4444] group-hover:translate-x-1 transition-all duration-200" />
+                  </button>
+
+                  {/* Flyout Subcategory Menu */}
+                  <div className="absolute left-full top-0 ml-2 w-80 bg-white dark:bg-[#131316] border border-slate-100 dark:border-zinc-800 rounded-lg shadow-xl z-40 transition-all duration-300 ease-out opacity-0 invisible translate-x-2 group-hover:opacity-100 group-hover:visible group-hover:translate-x-0 p-5 flex flex-col gap-4 text-slate-800 dark:text-zinc-200">
+                    <div>
+                      <h4 className="text-[11px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-2">
+                        Subcategories
+                      </h4>
+                      <div className="grid grid-cols-1 gap-1">
+                        {subcategories.map((sub, i) => (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              setSearchQuery(sub);
+                              navigate(`/products?category=${cat.id}`);
+                            }}
+                            className="text-xs font-semibold text-left hover:text-[#DB4444] transition-colors py-1 block rounded cursor-pointer"
+                          >
+                            {sub}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {flyoutProducts.length > 0 && (
+                      <div className="border-t border-slate-100 dark:border-zinc-850 pt-3.5">
+                        <h4 className="text-[11px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-2">
+                          Featured Items
+                        </h4>
+                        <div className="space-y-2">
+                          {flyoutProducts.map((prod) => (
+                            <Link
+                              key={prod.id}
+                              to={`/products/${prod.id}`}
+                              className="flex items-center gap-2.5 hover:bg-slate-50 dark:hover:bg-zinc-900/50 p-1.5 rounded transition-colors group/item"
+                            >
+                              <div className="h-8 w-8 rounded bg-slate-50 border border-slate-150 p-0.5 flex items-center justify-center shrink-0 dark:bg-zinc-900 dark:border-zinc-800">
+                                <img
+                                  src={prod.image}
+                                  alt={prod.name}
+                                  className="max-h-full max-w-full object-contain"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE;
+                                  }}
+                                />
+                              </div>
+                              <span className="text-xs font-semibold truncate group-hover/item:text-[#DB4444] transition-colors">
+                                {prod.name}
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-[#DB4444] group-hover:translate-x-1 transition-all duration-200" />
-                </button>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </aside>
 
@@ -328,7 +442,7 @@ export default function Home() {
 
       {/* Flash Sales Section */}
       {flashSaleProducts.length > 0 && (
-        <section className="space-y-6">
+        <section className="space-y-6 animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
@@ -380,24 +494,53 @@ export default function Home() {
 
       {/* Categories Grid */}
       {categories.length > 0 && (
-        <section className="space-y-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <span className="h-8 w-4 rounded-xs bg-[#DB4444]"></span>
-              <span className="text-xs font-bold text-[#DB4444]">{t('home.categories')}</span>
+        <section className="space-y-6 animate-fade-in-up">
+          <div className="flex items-end justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <span className="h-8 w-4 rounded-xs bg-[#DB4444]"></span>
+                <span className="text-xs font-bold text-[#DB4444]">{t('home.categories')}</span>
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{t('home.browse')}</h2>
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{t('home.browse')}</h2>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => scrollCategories('left')}
+                className="flex items-center justify-center h-11 w-11 rounded-full border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-100 transition-colors shadow-xs hover:scale-105 active:scale-95"
+                aria-label="Previous categories"
+              >
+                <Icons.ArrowLeft className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => scrollCategories('right')}
+                className="flex items-center justify-center h-11 w-11 rounded-full border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#18181b] hover:bg-slate-100 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-100 transition-colors shadow-xs hover:scale-105 active:scale-95"
+                aria-label="Next categories"
+              >
+                <Icons.ArrowRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+          <div 
+            ref={categoriesRef}
+            className="flex gap-4 overflow-x-auto no-scrollbar py-2 scroll-smooth md:justify-center"
+          >
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => handleCategoryClick(cat.id)}
-                className="flex flex-col items-center justify-center p-6 rounded border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#131316] hover:bg-[#DB4444] dark:hover:bg-[#DB4444] hover:text-white transition-all group hover:border-[#DB4444] cursor-pointer"
+                className="flex flex-col items-center justify-center min-w-[170px] h-[145px] p-4 rounded border border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#131316] hover:bg-[#DB4444] dark:hover:bg-[#DB4444] hover:text-white transition-all group hover:border-[#DB4444] cursor-pointer shrink-0"
               >
-                <CategoryIcon name={cat.iconName} className="h-8 w-8 text-slate-700 dark:text-zinc-300 group-hover:text-white mb-3" />
-                <span className="text-[10px] font-bold text-center">{cat.name}</span>
+                {cat.image ? (
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="h-14 w-14 object-contain transition-all mb-2.5 rounded-md group-hover:scale-105"
+                  />
+                ) : (
+                  <CategoryIcon name={cat.iconName} className="h-10 w-10 text-slate-700 dark:text-zinc-300 group-hover:text-white mb-3" />
+                )}
+                <span className="text-xs font-bold text-center truncate w-full">{cat.name}</span>
               </button>
             ))}
           </div>
@@ -406,7 +549,7 @@ export default function Home() {
 
       {/* Best Selling Section */}
       {bestSellers.length > 0 && (
-        <section className="space-y-6">
+        <section className="space-y-6 animate-fade-in-up">
           <div className="flex items-end justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
@@ -472,7 +615,7 @@ export default function Home() {
 
       {/* Explore Our Products Section */}
       {newArrivals.length > 0 && (
-        <section className="space-y-6">
+        <section className="space-y-6 animate-fade-in-up">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <span className="h-8 w-4 rounded-xs bg-[#DB4444]"></span>
@@ -499,7 +642,7 @@ export default function Home() {
       )}
 
       {/* New Arrival Section */}
-      <section className="space-y-6">
+      <section className="space-y-6 animate-fade-in-up">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
             <span className="h-8 w-4 rounded-xs bg-[#DB4444]"></span>

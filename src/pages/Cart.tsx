@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Trash2, Minus, Plus, ChevronRight } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { PLACEHOLDER_IMAGE } from '../lib/mockData';
+
 
 export default function Cart() {
   const { t } = useTranslation();
@@ -74,7 +76,14 @@ export default function Cart() {
                   <tr key={`${item.product.id}-${item.selectedColor}-${item.selectedSize}-${index}`} className="hover:bg-slate-50/50 dark:hover:bg-zinc-900/20">
                     <td className="p-4 flex items-center gap-4">
                       <div className="h-12 w-12 rounded bg-slate-50 border border-slate-200 p-1 shrink-0 flex items-center justify-center dark:bg-zinc-900 dark:border-zinc-800">
-                        <img src={item.product.image} alt={item.product.name} className="max-h-full max-w-full object-contain" />
+                        <img
+                          src={item.product.image || PLACEHOLDER_IMAGE}
+                          alt={item.product.name}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE;
+                          }}
+                        />
                       </div>
                       <div className="space-y-0.5 max-w-[200px]">
                         <h3 className="font-semibold text-slate-800 dark:text-zinc-200 truncate">{item.product.name}</h3>
@@ -133,7 +142,14 @@ export default function Cart() {
               >
                 <div className="flex items-start gap-4">
                   <div className="h-16 w-16 rounded bg-slate-50 border border-slate-200 p-1 shrink-0 flex items-center justify-center dark:bg-zinc-900 dark:border-zinc-855">
-                    <img src={item.product.image} alt={item.product.name} className="max-h-full max-w-full object-contain" />
+                    <img
+                      src={item.product.image || PLACEHOLDER_IMAGE}
+                      alt={item.product.name}
+                      className="max-h-full max-w-full object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE;
+                      }}
+                    />
                   </div>
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex justify-between items-start">

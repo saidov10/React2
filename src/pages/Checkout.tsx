@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, ChevronLeft, CreditCard, Wallet } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { PLACEHOLDER_IMAGE } from '../lib/mockData';
+
 
 export default function Checkout() {
   const { t } = useTranslation();
@@ -272,7 +274,14 @@ export default function Checkout() {
                   <div key={index} className="flex items-center justify-between py-3">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded border bg-slate-50 p-1 flex items-center justify-center dark:bg-zinc-900 dark:border-zinc-800">
-                        <img src={item.product.image} alt={item.product.name} className="max-h-full max-w-full object-contain" />
+                        <img
+                          src={item.product.image || PLACEHOLDER_IMAGE}
+                          alt={item.product.name}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = PLACEHOLDER_IMAGE;
+                          }}
+                        />
                       </div>
                       <div className="text-left max-w-[150px]">
                         <h4 className="text-xs font-semibold truncate text-slate-800 dark:text-zinc-200">{item.product.name}</h4>

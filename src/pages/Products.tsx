@@ -29,12 +29,14 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<number>(2000);
+  const [priceRange, setPriceRange] = useState<number | null>(null);
   const [minRating, setMinRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState<string>('default');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
   const [localSearch, setLocalSearch] = useState<string>('');
   const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
+
+  const maxProductPrice = products.length > 0 ? Math.ceil(Math.max(...products.map(p => p.price))) : 2000;
 
   useEffect(() => {
     fetchProducts({ PageSize: 100 });
@@ -85,7 +87,7 @@ export default function Products() {
     setSelectedCategory('');
     setSelectedBrands([]);
     setSelectedFeatures([]);
-    setPriceRange(2000);
+    setPriceRange(null);
     setMinRating(0);
     setSortBy('default');
     setLocalSearch('');
@@ -114,7 +116,8 @@ export default function Products() {
       if (!match) return false;
     }
 
-    if (product.price > priceRange) return false;
+    const currentMaxPrice = priceRange !== null ? priceRange : maxProductPrice;
+    if (product.price > currentMaxPrice) return false;
 
     if (product.rating < minRating) return false;
 
@@ -233,14 +236,14 @@ export default function Products() {
           <input
             type="range"
             min="0"
-            max="2000"
-            value={priceRange}
+            max={maxProductPrice}
+            value={priceRange !== null ? priceRange : maxProductPrice}
             onChange={(e) => setPriceRange(Number(e.target.value))}
             className="w-full accent-[#DB4444] bg-slate-200 h-1 rounded-lg dark:bg-zinc-800"
           />
           <div className="flex justify-between text-xs font-bold text-slate-500">
             <span>$0</span>
-            <span className="text-[#DB4444]">${priceRange}</span>
+            <span className="text-[#DB4444]">${priceRange !== null ? priceRange : maxProductPrice}</span>
           </div>
         </div>
       </div>
