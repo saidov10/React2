@@ -320,7 +320,7 @@ export default function Home() {
         {/* Sidebar Menu - Desktop Only */}
         <aside className="hidden lg:block lg:col-span-3 border-r border-slate-100 pr-6 dark:border-zinc-800 py-2">
           <ul className="space-y-5">
-            {categories.map((cat) => {
+            {categories.slice(0, 6).map((cat) => {
               const flyoutProducts = products.filter((p) => p.category === cat.id).slice(0, 3);
               const subcategories = getSubcategories(cat.name, cat.id, products);
               
